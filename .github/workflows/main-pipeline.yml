@@ -10,7 +10,7 @@ on:
 jobs:
   ci-pipeline:
     # here we import our lacl template
-    uses: ./.github/workflows/node-ci-template.yml
+    uses: ./.github/workflows/node-ci-template.yaml
     with:
       image-name: "my-local-registry/secure-server-api"
       node-version: "20.x"
