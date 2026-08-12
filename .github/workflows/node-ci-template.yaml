@@ -1,0 +1,81 @@
+name: professional node.js template CI
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "20.x"
+      image-name:
+        required: true
+        type: string
+    outputs:
+      image-tag:
+        description: "Tag unique de l'image Docker"
+        value: ${{ jobs.build-and-scan.outputs.version }}
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm' #OPTIMISATION: set in cache node_module folder
+
+      - name: install Dependancies
+        run: npm ci
+
+      - name: run Tests
+        run: npm test
+
+  build-and-scan:
+    needs: test-and-lint
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: generate metadata from docker
+        id: meta
+        uses: docker/metadata-actions@v5
+        with:
+          images: ${{ inputs.image-name }}
+          tags: type=sha,format=short # image linked to git commit
+
+      - name: local build of image for scaning
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true # lacally charge image on runner for trivy
+          tags: ${{ inputs.images-name }}:${{ steps.meta.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # DEVSECOPS PROACTIF: scan all vulnerabilities before publication
+
+      - name: Scan vulnerabilities with trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ inputs.image-name }}:${{ steps.meta.outputs.version }}
+          format: 'table'
+          exit-code: '1' # strict rule: stop pipeline if vulnerabities found
+          ignore-unfixed: true # ignore vulnerabilities who dont have correction available
+          severity: 'CRITICAL'
+
+
+
+
+
+
+
+
+
+
