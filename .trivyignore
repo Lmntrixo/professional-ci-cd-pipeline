@@ -1,0 +1,2 @@
+# Ignorer la faille interne de node-tar non corrigible dans l'image de base
+CVE-2026-59873
