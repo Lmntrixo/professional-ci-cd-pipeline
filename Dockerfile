@@ -1,7 +1,7 @@
 # ==========================================
 # ÉTAPE 1 : Le Build et les Dépendances
 # ==========================================
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -17,7 +17,7 @@ COPY server.js .
 # ==========================================
 # ÉTAPE 2 : L'image finale de Production (Ultra-légère et Sécurisée)
 # ==========================================
-FROM node:22-alpine
+FROM node:24-alpine
 
 #updating package in final image
 RUN apk update && apk upgrade --no-cache
