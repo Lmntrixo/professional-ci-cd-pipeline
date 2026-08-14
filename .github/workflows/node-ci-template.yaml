@@ -45,7 +45,7 @@ jobs:
 
       - name: generate metadata from docker
         id: meta
-        uses: docker/metadata-actions@v5
+        uses: docker/metadata-action@v5
         with:
           images: ${{ inputs.image-name }}
           tags: type=sha,format=short # image linked to git commit
