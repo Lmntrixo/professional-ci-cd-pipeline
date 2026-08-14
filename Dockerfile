@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Installation propre pour la production (ignore les devDependencies)
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Copie du reste du code source
 COPY server.js .
