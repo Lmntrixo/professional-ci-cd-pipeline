@@ -51,7 +51,7 @@ jobs:
           tags: type=sha,format=short # image linked to git commit
 
       - name: install and configure buildkit constructor
-        uses: docker/setuo-buildx-action@v3
+        uses: docker/setup-buildx-action@v3
 
       - name: local build of image for scaning
         uses: docker/build-push-action@v6
