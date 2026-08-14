@@ -19,6 +19,8 @@ COPY server.js .
 # ==========================================
 FROM node:20-alpine
 
+#updating package in final image
+RUN apk update && apk upgrade --no-cache
 # Marché Allemand / Sécurité : On n'exécute JAMAIS un conteneur en tant que 'root'
 USER node
 
