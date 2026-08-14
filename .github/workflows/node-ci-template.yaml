@@ -39,6 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.meta.outputs.version }}
+  # add permissions for authenticatio oidc  
+    permissions:
+      id-token: write # required for oidc authentication
+      contents: read # required for action checkout
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -53,12 +57,33 @@ jobs:
       - name: install and configure buildkit constructor
         uses: docker/setup-buildx-action@v3
 
-      - name: local build of image for scaning
+      #- name: local build of image for scaning
+      # uses: docker/build-push-action@v6
+      # with:
+      #   context: .
+      #   load: true # lacally charge image on runner for trivy
+      #   tags: ${{ steps.meta.outputs.tags }}
+      #   cache-from: type=gha
+      #   cache-to: type=gha,mode=max
+
+      - name: Configure  AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::875691018539:role/GithubActionsWorkflowRole
+          aws-region: eu-central-1
+
+      - name: Connexion to amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # OPTIMISATION: build and push directly to ecr using caches actions
+      - name: Build and push docker image
         uses: docker/build-push-action@v6
         with:
           context: .
-          load: true # lacally charge image on runner for trivy
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -67,10 +92,10 @@ jobs:
       - name: Scan vulnerabilities with trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ inputs.image-name }}:${{ steps.meta.outputs.version }}
+          image-ref: ${{ steps.meta.outputs.tags }}
           format: 'table'
           exit-code: '1' # strict rule: stop pipeline if vulnerabities found
-          ignore-unfixed: true # ignore vulnerabilities who dont have correction available
+          #ignore-unfixed: true # ignore vulnerabilities who dont have correction available
           severity: 'CRITICAL'
 
 
