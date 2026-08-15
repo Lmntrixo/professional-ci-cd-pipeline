@@ -17,5 +17,5 @@ jobs:
 
     uses: ./.github/workflows/node-ci-template.yaml
     with:
-      image-name: "://amazonaws.com"
-      node-version: "20.x"
+      image-name: "sts.amazonaws.com"
+      node-version: "24.x"
