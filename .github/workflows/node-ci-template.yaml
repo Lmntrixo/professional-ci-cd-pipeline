@@ -47,12 +47,12 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
-      - name: generate metadata from docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ inputs.image-name }}
-          tags: type=sha,format=short # image linked to git commit
+     # - name: generate metadata from docker
+      #  id: meta
+       # uses: docker/metadata-action@v5
+        #with:
+         # images: ${{ inputs.image-name }}
+          #tags: type=sha,format=short # image linked to git commit
 
       - name: install and configure buildkit constructor
         uses: docker/setup-buildx-action@v3
@@ -73,15 +73,25 @@ jobs:
           echo "=== Contenu du jeton décodé ==="
           echo $TOKEN | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 
+    #stage1: authenctication aws oidc
       - name: Configure  AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::875691018539:role/GitHubActionsWorkflowRole
           aws-region: eu-central-1
 
+    #stage2: login to amazone ECR
       - name: Connexion to amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+    #stage3: generated docker metadata
+      - name: generate metadata from docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{inputs.image-name }}
+          tags: type=sha,format=short
 
       # OPTIMISATION: build and push directly to ecr using caches actions
       - name: Build and push docker image
