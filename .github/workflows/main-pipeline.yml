@@ -15,7 +15,7 @@ jobs:
       id-token: write
       contents: read
 
-    uses: ./.github/workflows/node-ci-template.yaml
+    uses: ./.github/workflows/node-ci-template.yml
     with:
       image-name: "://amazonaws.com"
       node-version: "24.x"
