@@ -46,7 +46,7 @@ jobs:
               "docker pull 875691018539.dkr.ecr.eu-central-1.amazonaws.com/secure-demo-api:${{ needs.ci-pipeline.outputs.image-tag }}",
               "docker stop node-app || true",
               "docker rm node-app || true",
-              "docker run -d --name node-app --restart always -p 80:3000 ://amazonaws.com:${{ needs.ci-pipeline.outputs.image-tag }}"
+              "docker run -d --name node-app --restart always -p 80:3000 875691018539.dkr.ecr.eu-central-1.amazonaws.com:${{ needs.ci-pipeline.outputs.image-tag }}"
             ]' \
             --region eu-central-1
 
