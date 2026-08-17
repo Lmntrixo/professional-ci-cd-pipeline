@@ -25,5 +25,5 @@ app.post('/api/v1/user-data', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Application safely running on port ${PORT}`);
+    console.log(`Application start and safely running on port ${PORT}`);
 });
