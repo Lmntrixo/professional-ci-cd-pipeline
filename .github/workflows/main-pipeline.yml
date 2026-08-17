@@ -42,7 +42,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --comment "Deploying new version of secure-node-api via github Actions" \
             --parameters 'commands=[
-              "aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin ://amazonaws.com",
+              "aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 875691018539.dkr.ecr.eu-central-1.amazonaws.com",
               "docker pull 875691018539.dkr.ecr.eu-central-1.amazonaws.com/secure-demo-api:${{ needs.ci-pipeline.outputs.image-tag }}",
               "docker stop node-app || true",
               "docker rm node-app || true",
