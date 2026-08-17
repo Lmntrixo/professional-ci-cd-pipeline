@@ -3,8 +3,8 @@ name: Main devops pipeline
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  #pull_request:
+   # branches: [ "main" ]
 
 
 jobs:
@@ -19,3 +19,38 @@ jobs:
     with:
       image-name: "875691018539.dkr.ecr.eu-central-1.amazonaws.com/secure-demo-api"
       node-version: "24.x"
+
+  deploy-to-ec2:
+    needs: ci-pipeline # required: we only deploy if Ci is 100% ok
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: zero-trust connection to aws
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::875691018539:role/GitHubActionsWorkflowRole
+          aws-region: eu-central-1
+
+    # Security and automation: command sended to EC2's SSM agent
+
+      - name: Deployment on EC2 via AWS SSM (Zero open ports)
+        run: |
+          aws ssm send-command \
+            --instance-ids "i-04e6b5c995280757e" \
+
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploying new version of secure-node-api via github Actions" \
+            --parameters 'commands=[
+              "aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin ://amazonaws.com",
+              "docker pull ://amazonaws.com:${{ needs.ci-pipeline.outputs.image-tag }}",
+              "docker stop node-app || true",
+              "docker rm node-app || true",
+              "docker run -d --name node-app --restart always -p 80:3000 ://amazonaws.com:${{ needs.ci-pipeline.outputs.image-tag }}"
+            ]' \
+            --region eu-central-1
+
+
+
+
