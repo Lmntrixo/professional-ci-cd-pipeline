@@ -16,8 +16,8 @@ app.get('/health', (req, res) => {
 // SIMULATION RGPD (GDPR) : Gestion conforme des données personnelles
 app.post('/api/v1/user-data', (req, res) => {
     // Les logs de production ne doivent JAMAIS afficher de données sensibles (PII)
-    console.log("Audit log: Request received for data processing. [PII Redacted]");
-    
+    console.log("Audit logs: Requests received for data processing. [PII Redacted]");
+
     res.status(200).json({
         message: "Data processed successfully in compliance with GDPR.",
         storage_region: "eu-central-1 (Frankfurt)"
