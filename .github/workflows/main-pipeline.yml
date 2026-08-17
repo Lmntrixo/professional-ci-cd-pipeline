@@ -17,5 +17,5 @@ jobs:
 
     uses: ./.github/workflows/node-ci-template.yml
     with:
-      image-name: "://amazonaws.com"
+      image-name: "875691018539.dkr.ecr.eu-central-1.amazonaws.com/secure-demo-api"
       node-version: "24.x"
