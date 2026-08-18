@@ -10,7 +10,7 @@ app.use(express.json());
 
 // EN-POINT STANDARD PRODUCTION : Utilisé par AWS ou Kubernetes pour vérifier que l'app est en vie
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'UP',deployment: 'Automated via SSM' timestamp: new Date() });
+    res.status(200).json({ status: 'UP',deployment: 'Automated via SSM', timestamp: new Date() });
 });
 
 // SIMULATION RGPD (GDPR) : Gestion conforme des données personnelles
